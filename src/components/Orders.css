@@ -340,12 +340,12 @@ h2 {
 
 .order-form input,
 .order-form select {
-  padding: 12px 14px;
+  padding: 0.5rem;
   border-radius: 10px;
   border: 1px solid #ddd;
   background: #f9f9f9;
   color: #333;
-  font-size: 15px;
+  font-size: 14px;
   transition: all 0.3s ease;
 }
 
@@ -393,20 +393,20 @@ h2 {
 }
 
 .orders-table th {
-  background: linear-gradient(90deg, #7c3aed, #5b21b6);
-  color: #fff;
-  text-transform: uppercase;
+  background: #f1f5f9;
+  color: #111827;
+  text-transform: none;
   font-size: 14px;
-  letter-spacing: 0.8px;
-  padding: 14px;
+  letter-spacing: 0;
+  padding: 0.5rem;
   text-align: left;
 }
 
 .orders-table td {
-  padding: 12px 14px;
+  padding: 0.5rem;
   border-bottom: 1px solid #eee;
   color: #333;
-  font-size: 15px;
+  font-size: 14px;
   transition: background 0.2s;
 }
 
@@ -475,5 +475,54 @@ h2 {
 
   .heading {
     font-size: 1.6rem;
+  }
+  .orders-table {
+    padding: 8px;
+    border-radius: 10px;
+  }
+  .orders-table th,
+  .orders-table td {
+    padding: 0.5rem;
+  }
+}
+
+/* Mobile card-style table */
+@media (max-width: 600px) {
+  .orders-table table,
+  .orders-table thead,
+  .orders-table tbody,
+  .orders-table th,
+  .orders-table td,
+  .orders-table tr {
+    display: block;
+    width: 100%;
+  }
+  .orders-table thead {
+    display: none;
+  }
+  .orders-table tr {
+    margin-bottom: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    background: #fff;
+  }
+  .orders-table td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    text-align: right;
+    min-height: 32px;
+  }
+  .orders-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 600;
+    color: #555;
+    text-align: left;
   }
 }

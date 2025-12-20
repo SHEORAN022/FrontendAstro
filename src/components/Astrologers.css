@@ -71,18 +71,18 @@ h2 {
 
 /* Search Bar */
 .search-input {
-  padding: 10px;
+  padding: 8px 12px;
   width: 100%;
-  max-width: 400px;
-  margin-bottom: 20px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  max-width: 480px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
   outline: none;
 }
 
 .search-input:focus {
-  border-color: #4caf50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 /* Form */
@@ -129,12 +129,13 @@ h2 {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  overflow-x: auto;
 }
 
 .astrologers-table th,
 .astrologers-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
   text-align: center;
 }
 
@@ -187,7 +188,51 @@ h2 {
 
   .astrologers-table th,
   .astrologers-table td {
-    font-size: 14px;
-    padding: 8px;
+    font-size: 13px;
+    padding: 0.5rem;
+  }
+  .search-input {
+    max-width: 100%;
+  }
+}
+
+/* Mobile card-style table */
+@media (max-width: 600px) {
+  .astrologers-table,
+  .astrologers-table thead,
+  .astrologers-table tbody,
+  .astrologers-table th,
+  .astrologers-table td,
+  .astrologers-table tr {
+    display: block;
+    width: 100%;
+  }
+  .astrologers-table thead {
+    display: none;
+  }
+  .astrologers-table tr {
+    margin-bottom: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 0.5rem;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+  .astrologers-table td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    text-align: right;
+    min-height: 32px;
+  }
+  .astrologers-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 600;
+    color: #555;
+    text-align: left;
   }
 }

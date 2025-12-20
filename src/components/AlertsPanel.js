@@ -102,7 +102,7 @@ export default function AlertsPanel() {
           {alerts.length > 0 ? (
             alerts.map((alert, i) => (
               <li key={i} style={{ cursor: "pointer" }} onClick={() => handleAlertClick(alert)}>
-                ⚠️ {alert}
+                {alert}
               </li>
             ))
           ) : (

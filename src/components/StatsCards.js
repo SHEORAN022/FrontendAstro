@@ -213,7 +213,6 @@ export default function StatsCards() {
   return (
     <div className="stats-container">
       <div className="stat-card">
-        <div className="icon bg-blue">📦</div>
         <div>
           <h3>Active Orders</h3>
           <p>{showValue(stats.activeOrders)}</p>
@@ -222,7 +221,6 @@ export default function StatsCards() {
       </div>
 
       <div className="stat-card">
-        <div className="icon bg-yellow">⏳</div>
         <div>
           <h3>Pending Uploads</h3>
           <p>{showValue(stats.pendingUploads)}</p>
@@ -230,7 +228,6 @@ export default function StatsCards() {
       </div>
 
       <div className="stat-card">
-        <div className="icon bg-green">💊</div>
         <div>
           <h3>Remedies In Progress</h3>
           <p>{showValue(stats.remediesInProgress)}</p>
@@ -238,10 +235,9 @@ export default function StatsCards() {
       </div>
 
       <div className="stat-card">
-        <div className="icon bg-purple">⭐</div>
         <div>
           <h3>Top Services</h3>
-          <p>{showList(stats.topServices)}</p>
+          <p className="text-xs uppercase">{showList(stats.topServices)}</p>
         </div>
       </div>
 {/* 

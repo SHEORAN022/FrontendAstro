@@ -1,0 +1,136 @@
+:root {
+  --primary: #2563eb;
+  --bg: #f3f4f6;
+  --text: #1f2937;
+  --border: #e5e7eb;
+}
+
+.faq-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: sans-serif;
+}
+
+.faq-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.btn-main {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Table Design (Desktop) */
+.faq-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.faq-table th {
+  background: #f8fafc;
+  text-align: left;
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.faq-table td {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+/* Mobile "Tabs/Cards" Transformation */
+@media screen and (max-width: 768px) {
+  .faq-table, .faq-table thead, .faq-table tbody, .faq-table th, .faq-table td, .faq-table tr {
+    display: block; /* Force elements to stack */
+  }
+
+  .faq-table thead {
+    display: none; /* Hide real headers on mobile */
+  }
+
+  .faq-table tr {
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    padding: 0.5rem;
+  }
+
+  .faq-table td {
+    border: none;
+    position: relative;
+    padding-left: 50%; /* Make room for the pseudo-label */
+    text-align: right;
+    border-bottom: 1px solid #f9fafb;
+  }
+
+  .faq-table td::before {
+    content: attr(data-label); /* Pull text from data-label attribute */
+    position: absolute;
+    left: 1rem;
+    width: 45%;
+    text-align: left;
+    font-weight: 700;
+    color: #64748b;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+  }
+
+  .faq-table td:last-child {
+    border-bottom: 0;
+    text-align: center;
+    padding-left: 1rem;
+  }
+}
+
+/* UI Elements */
+.page-pill {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.status-dot.active { color: #059669; font-weight: 600; }
+.status-dot.inactive { color: #dc2626; font-weight: 600; }
+
+.action-btns { display: flex; gap: 15px; }
+.edit-link { color: var(--primary); background: none; border: none; cursor: pointer; font-weight: 600; }
+.delete-link { color: #dc2626; background: none; border: none; cursor: pointer; font-weight: 600; }
+
+/* Form Layout */
+.faq-card-form {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.field { margin-bottom: 1rem; }
+.field label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; }
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.form-btns { display: flex; gap: 10px; margin-top: 1rem; }
+.btn-save { background: var(--primary); color: white; border: none; flex: 2; padding: 0.7rem; border-radius: 4px; }
+.btn-cancel { background: #e5e7eb; border: none; flex: 1; padding: 0.7rem; border-radius: 4px; }

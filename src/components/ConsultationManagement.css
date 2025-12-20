@@ -1,97 +1,184 @@
-.consultation-container {
-  max-width: 1000px;
-  margin: 0 auto;
+:root {
+  --primary: #4f46e5;
+  --bg: #f1f5f9;
+  --text-dark: #0f172a;
+  --text-light: #64748b;
+  --white: #ffffff;
+  --border: #e2e8f0;
+}
+
+.cm-page-wrapper {
+  background: var(--bg);
+  min-height: 100vh;
+  padding: 15px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+}
+
+.cm-container { 
+  max-width: 1200px; 
+  margin: 0 auto; 
+  display: flex;
+  flex-direction: column; /* Force vertical flow */
+}
+
+/* 1. HEADER (ALWAYS TOP) */
+.cm-header { 
+  order: 1; 
+  text-align: center; 
+  margin-bottom: 20px; 
+  background: var(--white);
   padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-h2 {
-  text-align: center;
+.cm-header h1 { font-size: 22px; font-weight: 800; margin-bottom: 15px; }
+
+/* 2. TABS & FILTERS (THE "STATE" AREA) */
+.cm-top-bar {
+  order: 2; /* Comes after Header */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
-.btn-toggle-form {
-  display: inline-block;
-  margin-bottom: 20px;
-  padding: 10px 20px;
-  background-color: #2563eb;
-  color: #fff;
+.cm-tabs {
+  display: flex;
+  background: #e2e8f0;
+  padding: 4px;
+  border-radius: 10px;
+  justify-content: center;
+}
+
+.cm-tabs button {
+  flex: 1;
+  padding: 10px;
   border: none;
-  border-radius: 8px;
+  background: transparent;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
-}
-.btn-toggle-form:hover {
-  background-color: #1e40af;
+  border-radius: 8px;
+  color: var(--text-light);
 }
 
-.consultation-form {
+.cm-tabs button.active {
+  background: var(--white);
+  color: var(--primary);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 3. CONTENT (TABLE / CALENDAR) */
+.cm-content, .cm-calendar-container {
+  order: 3;
+}
+
+.cm-search-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 20px;
+  background: var(--white);
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.consultation-form input,
-.consultation-form textarea,
-.consultation-form button {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.cm-search-group input, .cm-search-group select {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   font-size: 14px;
 }
 
-.consultation-form button {
-  background-color: #2563eb;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.consultation-form button:hover {
-  background-color: #1e40af;
-}
-
-.table-responsive {
-  overflow-x: auto;
-}
-
-.consultation-table {
+.cm-add-btn {
   width: 100%;
-  border-collapse: collapse;
-}
-
-.consultation-table th,
-.consultation-table td {
-  padding: 10px;
-  border: 1px solid #ddd;
-  text-align: left;
-  font-size: 14px;
-}
-
-.consultation-table th {
-  background-color: #f3f4f6;
-}
-
-.consultation-table td button {
-  margin-right: 5px;
-  padding: 5px 10px;
-  border-radius: 6px;
+  background: var(--primary);
+  color: white;
   border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.consultation-table td button:hover {
-  opacity: 0.8;
+/* TABLE TO CARDS ON MOBILE */
+.cm-table-container {
+  background: transparent;
 }
 
-@media (max-width: 768px) {
-  .consultation-form input,
-  .consultation-form textarea,
-  .consultation-form button {
-    font-size: 12px;
+.cm-responsive-table { width: 100%; border-collapse: collapse; }
+.cm-responsive-table thead { display: none; } /* Hide headers on mobile */
+
+.cm-responsive-table tr { 
+  display: block; 
+  background: var(--white);
+  margin-bottom: 15px; 
+  border-radius: 12px; 
+  padding: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.cm-responsive-table td {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 5px;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.cm-responsive-table td:last-child { border-bottom: none; }
+
+.cm-responsive-table td::before {
+  content: attr(data-label);
+  font-weight: 700;
+  color: var(--text-light);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+/* BADGES & STATUS */
+.cm-status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+}
+.cm-status.pending { background: #fef3c7; color: #92400e; }
+.cm-status.completed { background: #dcfce7; color: #166534; }
+
+.cm-action-btns { display: flex; gap: 8px; }
+.cm-action-btns button {
+  padding: 8px 15px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+}
+
+/* CALENDAR SCALING */
+.cm-calendar-card {
+  background: var(--white);
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* DESKTOP RE-ORDERING */
+@media (min-width: 769px) {
+  .cm-top-bar {
+    flex-direction: row;
+    align-items: center;
   }
-  .consultation-table th,
-  .consultation-table td {
-    font-size: 12px;
+  
+  .cm-search-group {
+    flex-direction: row;
+    flex-grow: 1;
   }
+
+  .cm-add-btn { width: auto; }
+
+  .cm-responsive-table thead { display: table-header-group; }
+  .cm-responsive-table tr { display: table-row; background: var(--white); }
+  .cm-responsive-table td { display: table-cell; }
+  .cm-responsive-table td::before { display: none; }
 }

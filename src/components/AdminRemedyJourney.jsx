@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "./AdminRemedyJourney.css";
 
 const API = "https://astrobackend-5sr6.onrender.com/api/remedy-journey";
 const USERS_API = "https://astrobackend-5sr6.onrender.com/api/userweb";
@@ -15,26 +16,24 @@ export default function AdminRemedyJourney() {
     remedyType: "Mantra",
   });
 
-  /* ================= LOAD REMEDIES ================= */
+  // Load Main Data
   const load = async () => {
     try {
       const res = await axios.get(API);
       setData(res.data || []);
     } catch (err) {
-      console.error("Load remedies error", err);
+      console.error("Error fetching data:", err);
     }
   };
 
-  /* ================= LOAD USERS ================= */
+  // Load User List
   const loadUsers = async () => {
+    setLoadingUsers(true);
     try {
-      setLoadingUsers(true);
       const res = await axios.get(USERS_API);
-
-      // 🔥 FIX HERE
       setUsers(res.data?.data || []);
     } catch (err) {
-      console.error("Load users error", err);
+      console.error("Error fetching users:", err);
     } finally {
       setLoadingUsers(false);
     }
@@ -45,141 +44,127 @@ export default function AdminRemedyJourney() {
     loadUsers();
   }, []);
 
-  /* ================= CREATE ================= */
+  // Create New Remedy
   const create = async () => {
     if (!form.user || !form.remedyName) {
-      alert("Select user & enter remedy name");
+      alert("Please select a user and enter a remedy name");
       return;
     }
-
     try {
       await axios.post(API, form);
       setForm({ user: "", remedyName: "", remedyType: "Mantra" });
       load();
     } catch (err) {
-      console.error("Create error", err);
-      alert("Failed to assign remedy");
+      alert("Error creating remedy");
     }
   };
 
-  /* ================= UPDATE STATUS ================= */
+  // Update Status
   const updateStatus = async (id, status) => {
     try {
       await axios.put(`${API}/${id}/status`, { status });
       load();
     } catch (err) {
-      console.error("Update status error", err);
+      console.error("Error updating status");
     }
   };
 
-  /* ================= DELETE ================= */
+  // Delete Remedy
   const remove = async (id) => {
-    if (!window.confirm("Delete remedy?")) return;
-
+    if (!window.confirm("Are you sure you want to delete this remedy?")) return;
     try {
       await axios.delete(`${API}/${id}`);
       load();
     } catch (err) {
-      console.error("Delete error", err);
+      console.error("Error deleting remedy");
     }
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>🌿 Remedy Journey (Admin)</h2>
+    <div className="admin-wrapper">
+      <div className="admin-container">
+        <header className="page-header">
+          <h2>Remedy Journey <small>Admin Dashboard</small></h2>
+        </header>
 
-      {/* ================= CREATE FORM ================= */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 15 }}>
-        <select
-          value={form.user}
-          onChange={(e) => setForm({ ...form, user: e.target.value })}
-        >
-          <option value="">Select User</option>
+        {/* ASSIGNMENT FORM */}
+        <div className="form-card">
+          <div className="form-grid">
+            <div className="input-group">
+              <label>Assign to User</label>
+              <select
+                value={form.user}
+                onChange={(e) => setForm({ ...form, user: e.target.value })}
+              >
+                <option value="">-- Select User --</option>
+                {loadingUsers ? (
+                  <option>Loading users...</option>
+                ) : (
+                  users.map((u) => (
+                    <option key={u._id} value={u._id}>
+                      {u.name || "Unknown"} ({u.email})
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
 
-          {loadingUsers ? (
-            <option>Loading users...</option>
-          ) : (
-            users.map((u) => (
-              <option key={u._id} value={u._id}>
-                {u.name || "User"} ({u.email})
-              </option>
-            ))
-          )}
-        </select>
+            <div className="input-group">
+              <label>Remedy Name</label>
+              <input
+                placeholder="Enter remedy name..."
+                value={form.remedyName}
+                onChange={(e) => setForm({ ...form, remedyName: e.target.value })}
+              />
+            </div>
 
-        <input
-          placeholder="Remedy Name"
-          value={form.remedyName}
-          onChange={(e) =>
-            setForm({ ...form, remedyName: e.target.value })
-          }
-        />
+            <div className="input-group">
+              <label>Type</label>
+              <select
+                value={form.remedyType}
+                onChange={(e) => setForm({ ...form, remedyType: e.target.value })}
+              >
+                <option value="Mantra">Mantra</option>
+                <option value="Gemstone">Gemstone</option>
+                <option value="Yantra">Yantra</option>
+                <option value="Pooja">Pooja</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
 
-        <select
-          value={form.remedyType}
-          onChange={(e) =>
-            setForm({ ...form, remedyType: e.target.value })
-          }
-        >
-          <option value="Mantra">Mantra</option>
-          <option value="Gemstone">Gemstone</option>
-          <option value="Yantra">Yantra</option>
-          <option value="Pooja">Pooja</option>
-          <option value="Other">Other</option>
-        </select>
+            <button className="btn-assign" onClick={create}>Assign Remedy</button>
+          </div>
+        </div>
 
-        <button onClick={create}>Assign Remedy</button>
-      </div>
-
-      <hr />
-
-      {/* ================= TABLE ================= */}
-      <table width="100%" border="1" cellPadding="8">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Remedy</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {data.length === 0 && (
-            <tr>
-              <td colSpan="5" align="center">
-                No remedies assigned
-              </td>
-            </tr>
-          )}
+        {/* JOURNEY CARDS */}
+        <div className="cards-grid">
+          {data.length === 0 && <p className="empty-msg">No journeys found.</p>}
 
           {data.map((r) => (
-            <tr key={r._id}>
-              <td>
-                <strong>{r.user?.name}</strong>
-                <br />
-                <small>{r.user?.email}</small>
-              </td>
-              <td>{r.remedyName}</td>
-              <td>{r.remedyType}</td>
-              <td>{r.status}</td>
-              <td>
-                <button onClick={() => updateStatus(r._id, "IN_PROGRESS")}>
-                  Start
-                </button>{" "}
-                <button onClick={() => updateStatus(r._id, "COMPLETED")}>
-                  Complete
-                </button>{" "}
-                <button onClick={() => updateStatus(r._id, "DROPPED")}>
-                  Drop
-                </button>{" "}
-                <button onClick={() => remove(r._id)}>Delete</button>
-              </td>
-            </tr>
+            <div key={r._id} className="journey-card">
+              <div className="card-header">
+                <span className="type-tag">{r.remedyType}</span>
+                <span className={`status-tag ${r.status?.toLowerCase()}`}>
+                  {r.status?.replace("_", " ")}
+                </span>
+              </div>
+
+              <div className="card-content">
+                <h3>{r.remedyName}</h3>
+                <p><strong>User:</strong> {r.user?.name || "N/A"}</p>
+                <p className="email-text"><strong>Email:</strong> {r.user?.email}</p>
+              </div>
+
+              <div className="card-actions">
+                <button className="btn-action btn-start" onClick={() => updateStatus(r._id, "IN_PROGRESS")}>Start</button>
+                <button className="btn-action btn-complete" onClick={() => updateStatus(r._id, "COMPLETED")}>Complete</button>
+                <button className="btn-action btn-drop" onClick={() => updateStatus(r._id, "DROPPED")}>Drop</button>
+                <button className="btn-action text-white bg-red-500 text-white px-4 py-2" onClick={() => remove(r._id)}>Delete</button>
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
     </div>
   );
 }

@@ -79,6 +79,7 @@ export default function ClientManagement() {
         placeholder="Search by name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
+        className="search-input"
       />
 
       {/* --- Form --- */}
@@ -126,9 +127,13 @@ export default function ClientManagement() {
         <tbody>
           {clients.map((c) => (
             <tr key={c._id}>
-              <td onClick={() => setSelectedClient(c)} style={{ color: "blue", cursor: "pointer", textDecoration: "underline" }}>{c.name}</td>
-              <td>{c.email}</td><td>{c.phone}</td><td>{c.dob}</td><td>{c.gender}</td><td>{c.location}</td>
-              <td>
+              <td data-label="Name" onClick={() => setSelectedClient(c)} style={{ color: "blue", cursor: "pointer", textDecoration: "underline" }}>{c.name}</td>
+              <td data-label="Email">{c.email}</td>
+              <td data-label="Phone">{c.phone}</td>
+              <td data-label="DOB">{c.dob}</td>
+              <td data-label="Gender">{c.gender}</td>
+              <td data-label="Location">{c.location}</td>
+              <td data-label="Actions">
                 <button onClick={() => handleEdit(c)}>Edit</button>
                 <button onClick={() => handleDelete(c._id)}>Delete</button>
               </td>

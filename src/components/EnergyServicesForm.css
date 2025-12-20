@@ -1,0 +1,145 @@
+.energy-wrapper {
+  padding: 20px;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* HEADINGS */
+.energy-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.energy-subtitle {
+  margin-top: 40px;
+  font-size: 20px;
+}
+
+/* FORM */
+.energy-form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.energy-input,
+.energy-textarea {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.energy-textarea {
+  resize: vertical;
+  min-height: 80px;
+  grid-column: span 2;
+}
+
+.energy-btn-group {
+  grid-column: span 2;
+  display: flex;
+  gap: 10px;
+}
+
+/* BUTTONS */
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+}
+
+.btn-edit {
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+}
+
+.bg-red-500 text-white px-4 py-2 {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 12px 6px;
+  border-radius: 5px;
+  
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* TABLE */
+.energy-table-wrapper {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+
+.energy-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.energy-table th,
+.energy-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.energy-table th {
+  background: #f1f5f9;
+}
+
+.energy-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* MOBILE RESPONSIVE TABLE */
+@media (max-width: 768px) {
+  .energy-table thead {
+    display: none;
+  }
+
+  .energy-table tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid #e5e7eb;
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  .energy-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+  }
+
+  .energy-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+  }
+
+  .energy-textarea,
+  .energy-btn-group {
+    grid-column: span 1;
+  }
+}

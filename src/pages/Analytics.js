@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { fetchAnalytics, createAnalytics, updateAnalytics, deleteAnalytics } from "../api/analyticsApi";
+import { fetchAnalytics, createAnalytics, deleteAnalytics } from "../api/analyticsApi";
+import "./Analytics.css";
 
 export default function Analytics() {
   const [analyticsList, setAnalyticsList] = useState([]);
@@ -7,74 +8,98 @@ export default function Analytics() {
   const [data, setData] = useState("{}");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadAnalytics();
-  }, []);
+  useEffect(() => { loadAnalytics(); }, []);
 
   const loadAnalytics = async () => {
     try {
       const res = await fetchAnalytics();
       setAnalyticsList(res.data.data || []);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to load analytics");
-    }
+    } catch (err) { console.error("Load failed"); }
   };
 
   const saveAnalytics = async () => {
     if (!type) return alert("Enter type");
-    let parsedData = {};
-    try { parsedData = JSON.parse(data); } catch { return alert("Invalid JSON"); }
-    setLoading(true);
     try {
+      const parsedData = JSON.parse(data);
+      setLoading(true);
       await createAnalytics({ type, data: parsedData });
       setType(""); setData("{}");
       loadAnalytics();
-      alert("Saved successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Error saving");
-    } finally { setLoading(false); }
-  };
-
-  const removeAnalytics = async (id) => {
-    if (!window.confirm("Delete this analytics?")) return;
-    try {
-      await deleteAnalytics(id);
-      loadAnalytics();
-      alert("Deleted successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Delete failed");
-    }
+    } catch { alert("Invalid JSON format"); } finally { setLoading(false); }
   };
 
   return (
-    <div style={styles.container}>
-      <h2>Reports & Analytics</h2>
+    <div className="analytics-page">
+      <div className="analytics-container">
+        
+        <header className="page-header">
+          <h1> Analytics Dashboard</h1>
+          <p>Real-time data insights and report management</p>
+        </header>
 
-      <input placeholder="Type (e.g. revenue)" value={type} onChange={e => setType(e.target.value)} style={styles.input} />
-      <textarea placeholder='Data as JSON' value={data} onChange={e => setData(e.target.value)} rows={4} style={styles.input} />
-      <button onClick={saveAnalytics} style={styles.button} disabled={loading}>{loading ? "Saving..." : "Save Analytics"}</button>
-
-      <h3>All Analytics</h3>
-      {analyticsList.length === 0 ? <p>No records.</p> : (
-        analyticsList.map(a => (
-          <div key={a._id} style={styles.card}>
-            <strong>{a.type}</strong>
-            <pre>{JSON.stringify(a.data, null, 2)}</pre>
-            <button onClick={() => removeAnalytics(a._id)} style={styles.deleteBtn}>Delete</button>
+        {/* 1. GRAPH SECTION - RESPONSIVE CONTAINER */}
+        <div className="charts-section">
+          <div className="chart-wrapper">
+             {/* Replace this div with your actual Chart component (Chart.js, Recharts, etc.) */}
+             <div className="chart-placeholder">
+                <p>Interactive Graph Container</p>
+                <span>(Automatically scales to fit screen)</span>
+             </div>
           </div>
-        ))
-      )}
+        </div>
+
+        {/* 2. INPUT FORM */}
+        <div className="form-section">
+          <div className="form-row">
+            <div className="input-group">
+              <label>Report Name</label>
+              <input value={type} onChange={e => setType(e.target.value)} placeholder="e.g. User Retention" />
+            </div>
+            <div className="input-group">
+              <label>JSON Payload</label>
+              <textarea value={data} onChange={e => setData(e.target.value)} rows={3} placeholder='{"status": "active"}' />
+            </div>
+          </div>
+          <button className="main-btn" onClick={saveAnalytics} disabled={loading}>
+            {loading ? "Generating..." : "Save Analytics"}
+          </button>
+        </div>
+
+        {/* 3. DATA LIST (TABLE ON DESKTOP / CARDS ON MOBILE) */}
+        <div className="data-list-wrapper">
+          <div className="data-header">
+            <span>Type</span>
+            <span>Data Preview</span>
+            <span>Date</span>
+            <span className="text-right">Action</span>
+          </div>
+
+          <div className="data-rows">
+            {analyticsList.length === 0 ? (
+              <div className="empty-row">No records found.</div>
+            ) : (
+              analyticsList.map(a => (
+                <div key={a._id} className="data-row-item">
+                  <div className="col type-col" data-label="Type">
+                    <span className="pill">{a.type}</span>
+                  </div>
+                  <div className="col data-col" data-label="Data Preview">
+                    <code>{JSON.stringify(a.data)}</code>
+                  </div>
+                  <div className="col date-col" data-label="Created At">
+                    {new Date().toLocaleDateString()}
+                  </div>
+                  <div className="col action-col text-right">
+                    <button className="del-btn" onClick={() => deleteAnalytics(a._id).then(loadAnalytics)}>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
-
-const styles = {
-  container: { maxWidth: 800, margin: "auto", padding: 20, background: "#1e293b", color: "#fff", borderRadius: 8 },
-  input: { width: "100%", padding: 10, marginBottom: 10, borderRadius: 6, border: "1px solid #334155", background: "#0f172a", color: "#e2e8f0" },
-  button: { width: "100%", padding: 10, border: "none", borderRadius: 6, background: "#3b82f6", color: "#fff", fontWeight: "bold", cursor: "pointer", marginBottom: 20 },
-  card: { background: "#0f172a", padding: 10, marginBottom: 12, borderRadius: 6 },
-  deleteBtn: { padding: "4px 8px", background: "#ef4444", border: "none", borderRadius: 4, color: "#fff", cursor: "pointer", marginTop: 8 }
-};

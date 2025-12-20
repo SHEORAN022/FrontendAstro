@@ -80,10 +80,53 @@
 
 import React from "react";
 
-export default function PendingUploads({ pending }) {
+export default function PendingUploadsTable({ uploads = [] }) {
+  const safeRows = Array.isArray(uploads) ? uploads : [];
+  const headers = ["Client", "Report", "Date"];
+
+  const getCell = (row, key) => {
+    if (!row || typeof row !== "object") return "—";
+    switch (key) {
+      case "Client":
+        return row.client || row.clientName || "—";
+      case "Report":
+        return row.report || row.title || row.type || "—";
+      case "Date":
+        return row.date || row.createdAt || row.updatedAt || "—";
+      default:
+        return "—";
+    }
+  };
+
   return (
-    <div className="pending-uploads">
-      <h3>Pending Uploads: {pending}</h3>
+    <div className="table-container">
+      <h3>Pending PDF Uploads</h3>
+      <table>
+        <thead>
+          <tr>
+            {headers.map((h) => (
+              <th key={h}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {safeRows.length === 0 ? (
+            <tr>
+              <td colSpan={headers.length} style={{ textAlign: "center" }}>
+                No pending uploads
+              </td>
+            </tr>
+          ) : (
+            safeRows.map((row, idx) => (
+              <tr key={row.id || row._id || idx}>
+                {headers.map((h) => (
+                  <td key={h}>{getCell(row, h)}</td>
+                ))}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

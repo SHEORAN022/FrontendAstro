@@ -22,7 +22,7 @@ export default function CalendarView() {
       {dayEvents.length > 0 && (
         <ul>
           {dayEvents.map((event, i) => (
-            <li key={i}>📌 {event}</li>
+            <li key={i}>{event}</li>
           ))}
         </ul>
       )}

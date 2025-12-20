@@ -1043,6 +1043,470 @@
 // }
 
 
+// import React, { useState, useEffect } from "react";
+// import {
+//   getPlans,
+//   createPlan,
+//   updatePlan,
+//   deletePlan,
+//   getReferrals,
+//   approveReferral,
+//   deleteReferral,
+// } from "../api/subscriptionApi";
+// import { createOrder, verifyPayment } from "../api/paymentApi";
+// import {
+//   getDiscounts,
+//   createDiscount,
+//   updateDiscount,
+//   deleteDiscount,
+// } from "../api/discountApi";
+// import "./WalletPage.css";
+
+// export default function WalletPage({ user: propUser }) {
+//   // ✅ Auto load user
+//   const [user, setUser] = useState(propUser || null);
+
+//   useEffect(() => {
+//     if (!propUser) {
+//       const savedUser = JSON.parse(localStorage.getItem("user"));
+//       if (savedUser) {
+//         setUser(savedUser);
+//         console.log("✅ Loaded user from localStorage:", savedUser);
+//       } else {
+//         console.warn("⚠ No user found in props or localStorage.");
+//       }
+//     }
+//   }, [propUser]);
+
+//   const [plans, setPlans] = useState([]);
+//   const [newPlan, setNewPlan] = useState({ name: "", amount: "", interval: "monthly" });
+//   const [editingPlan, setEditingPlan] = useState(null);
+
+//   const [referrals, setReferrals] = useState([]);
+//   const [discounts, setDiscounts] = useState([]);
+//   const [newDiscount, setNewDiscount] = useState({ code: "", percentage: "" });
+//   const [editingDiscount, setEditingDiscount] = useState(null);
+
+//   const [payName, setPayName] = useState("");
+//   const [payEmail, setPayEmail] = useState("");
+//   const [payAmount, setPayAmount] = useState("");
+
+//   // 🧩 Auto-fill name/email once user loads
+//   useEffect(() => {
+//     if (user) {
+//       setPayName(user.name || "");
+//       setPayEmail(user.email || "");
+//     }
+//   }, [user]);
+
+//   // ✅ Fetch data
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       const [plansData, refsData, discData] = await Promise.all([
+//         getPlans(),
+//         getReferrals(),
+//         getDiscounts(),
+//       ]);
+//       setPlans(plansData || []);
+//       setReferrals(refsData || []);
+//       setDiscounts(discData?.discounts || []);
+//     };
+//     fetchData();
+//   }, []);
+
+//   /* ===========================================================
+//      🔹 PLANS CRUD
+//   =========================================================== */
+//   const handleCreatePlan = async () => {
+//     if (!newPlan.name || !newPlan.amount) return alert("Name & Amount required");
+//     await createPlan(newPlan);
+//     setNewPlan({ name: "", amount: "", interval: "monthly" });
+//     setPlans(await getPlans());
+//   };
+
+//   const handleEditPlan = (plan) => setEditingPlan({ ...plan });
+//   const handleUpdatePlan = async () => {
+//     await updatePlan(editingPlan._id, editingPlan);
+//     setEditingPlan(null);
+//     setPlans(await getPlans());
+//   };
+
+//   const handleDeletePlan = async (id) => {
+//     if (window.confirm("Delete this plan?")) {
+//       await deletePlan(id);
+//       setPlans(await getPlans());
+//     }
+//   };
+
+//   /* ===========================================================
+//      🔹 REFERRALS
+//   =========================================================== */
+//   const handleApproveReferral = async (id) => {
+//     await approveReferral(id);
+//     setReferrals(await getReferrals());
+//   };
+
+//   const handleDeleteReferral = async (id) => {
+//     if (window.confirm("Delete this referral?")) {
+//       await deleteReferral(id);
+//       setReferrals(await getReferrals());
+//     }
+//   };
+
+//   /* ===========================================================
+//      🔹 DISCOUNTS CRUD
+//   =========================================================== */
+//   const handleCreateDiscount = async () => {
+//     if (!newDiscount.code || !newDiscount.percentage)
+//       return alert("Code & Percentage required");
+//     await createDiscount({
+//       code: newDiscount.code,
+//       discountPercentage: newDiscount.percentage,
+//     });
+//     setNewDiscount({ code: "", percentage: "" });
+//     setDiscounts((await getDiscounts()).discounts || []);
+//   };
+
+//   const handleEditDiscount = (d) => setEditingDiscount({ ...d });
+//   const handleUpdateDiscount = async () => {
+//     await updateDiscount(editingDiscount._id, editingDiscount);
+//     setEditingDiscount(null);
+//     setDiscounts((await getDiscounts()).discounts || []);
+//   };
+
+//   const handleDeleteDiscount = async (id) => {
+//     if (window.confirm("Delete this discount?")) {
+//       await deleteDiscount(id);
+//       setDiscounts((await getDiscounts()).discounts || []);
+//     }
+//   };
+
+//   /* ===========================================================
+//      💳 PAYMENT (FIXED VERSION)
+//   =========================================================== */
+//   const handlePayment = async () => {
+//     console.log("🧑‍💻 User before payment:", user);
+
+//     if (!payName || !payEmail || !payAmount)
+//       return alert("All fields required");
+
+//     const testUserId = "672af93b9cf24a87a0c5f8de"; // fallback for testing
+//     const userId = user?._id || testUserId;
+
+//     try {
+//       const amount = Number(payAmount);
+//       if (isNaN(amount) || amount <= 0) return alert("Invalid amount");
+
+//       const response = await createOrder({ amount, userId });
+//       console.log("📦 Order Response:", response);
+
+//       if (!response?.success || !response?.order)
+//         return alert("Order creation failed!");
+
+//       const rzp = new window.Razorpay({
+//         // key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+//         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+//         amount: response.order.amount,
+//         currency: response.order.currency,
+//         name: "Astrology App",
+//         description: "Astrology Services Payment",
+//         order_id: response.order.id,
+//         handler: async (res) => {
+//           alert("✅ Payment Successful!");
+//           await verifyPayment({
+//             ...res,
+//             amount,
+//             userId,
+//           });
+//         },
+//         prefill: {
+//           name: payName,
+//           email: payEmail,
+//         },
+//         theme: { color: "#3399cc" },
+//       });
+
+//       rzp.on("payment.failed", function (err) {
+//         console.error("❌ Payment failed:", err.error);
+//         alert("Payment failed. Please try again.");
+//       });
+
+//       rzp.open();
+//     } catch (e) {
+//       console.error("❌ Payment Error:", e);
+//       alert("Payment failed, check console logs.");
+//     }
+//   };
+
+//   return (
+//     <div className="wallet-container">
+//       <h1>💰 Wallet & Payment Dashboard</h1>
+
+//       {/* ✅ Show logged-in user */}
+//       {user ? (
+//         <div className="user-card">
+//           <strong>Logged in as:</strong> {user.name} ({user.email})
+//         </div>
+//       ) : (
+//         <div className="user-card warning">⚠ Please log in first</div>
+//       )}
+
+//       {/* ===================== PLANS ===================== */}
+//       <section className="card">
+//         <h2>📦 Subscription Plans</h2>
+//         <div className="form-inline">
+//           <input
+//             placeholder="Name"
+//             value={newPlan.name}
+//             onChange={(e) => setNewPlan({ ...newPlan, name: e.target.value })}
+//           />
+//           <input
+//             placeholder="Amount"
+//             type="number"
+//             value={newPlan.amount}
+//             onChange={(e) => setNewPlan({ ...newPlan, amount: e.target.value })}
+//           />
+//           <select
+//             value={newPlan.interval}
+//             onChange={(e) => setNewPlan({ ...newPlan, interval: e.target.value })}
+//           >
+//             <option value="weekly">Weekly</option>
+//             <option value="monthly">Monthly</option>
+//             <option value="yearly">Yearly</option>
+//           </select>
+//           <button onClick={handleCreatePlan}>Add</button>
+//         </div>
+
+//         <table className="crud-table">
+//           <thead>
+//             <tr>
+//               <th>Name</th>
+//               <th>Amount (₹)</th>
+//               <th>Interval</th>
+//               <th>Actions</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {plans.length > 0 ? (
+//               plans.map((p) =>
+//                 editingPlan?._id === p._id ? (
+//                   <tr key={p._id}>
+//                     <td>
+//                       <input
+//                         value={editingPlan.name}
+//                         onChange={(e) =>
+//                           setEditingPlan({ ...editingPlan, name: e.target.value })
+//                         }
+//                       />
+//                     </td>
+//                     <td>
+//                       <input
+//                         type="number"
+//                         value={editingPlan.amount}
+//                         onChange={(e) =>
+//                           setEditingPlan({
+//                             ...editingPlan,
+//                             amount: e.target.value,
+//                           })
+//                         }
+//                       />
+//                     </td>
+//                     <td>
+//                       <select
+//                         value={editingPlan.interval}
+//                         onChange={(e) =>
+//                           setEditingPlan({
+//                             ...editingPlan,
+//                             interval: e.target.value,
+//                           })
+//                         }
+//                       >
+//                         <option value="weekly">Weekly</option>
+//                         <option value="monthly">Monthly</option>
+//                         <option value="yearly">Yearly</option>
+//                       </select>
+//                     </td>
+//                     <td>
+//                       <button onClick={handleUpdatePlan}>💾 Save</button>
+//                       <button onClick={() => setEditingPlan(null)}>✖ Cancel</button>
+//                     </td>
+//                   </tr>
+//                 ) : (
+//                   <tr key={p._id}>
+//                     <td>{p.name}</td>
+//                     <td>{p.amount}</td>
+//                     <td>{p.interval}</td>
+//                     <td>
+//                       <button onClick={() => handleEditPlan(p)}>✏ Edit</button>
+//                       <button onClick={() => handleDeletePlan(p._id)}>🗑 Delete</button>
+//                     </td>
+//                   </tr>
+//                 )
+//               )
+//             ) : (
+//               <tr>
+//                 <td colSpan="4">No Plans Available</td>
+//               </tr>
+//             )}
+//           </tbody>
+//         </table>
+//       </section>
+
+//       {/* ===================== REFERRALS ===================== */}
+//       <section className="card">
+//         <h2>🎯 Referrals</h2>
+//         <table className="crud-table">
+//           <thead>
+//             <tr>
+//               <th>Code</th>
+//               <th>Status</th>
+//               <th>User</th>
+//               <th>Actions</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {referrals.length > 0 ? (
+//               referrals.map((r) => (
+//                 <tr key={r._id}>
+//                   <td>{r.code}</td>
+//                   <td>{r.approved ? "✅ Approved" : "❌ Pending"}</td>
+//                   <td>{r.user?.name || "N/A"}</td>
+//                   <td>
+//                     {!r.approved && (
+//                       <button onClick={() => handleApproveReferral(r._id)}>✔ Approve</button>
+//                     )}
+//                     <button onClick={() => handleDeleteReferral(r._id)}>🗑 Delete</button>
+//                   </td>
+//                 </tr>
+//               ))
+//             ) : (
+//               <tr>
+//                 <td colSpan="4">No Referrals Found</td>
+//               </tr>
+//             )}
+//           </tbody>
+//         </table>
+//       </section>
+
+//       {/* ===================== DISCOUNTS ===================== */}
+//       <section className="card">
+//         <h2>🏷 Discounts</h2>
+//         <div className="form-inline">
+//           <input
+//             placeholder="Code"
+//             value={newDiscount.code}
+//             onChange={(e) =>
+//               setNewDiscount({ ...newDiscount, code: e.target.value })
+//             }
+//           />
+//           <input
+//             placeholder="Percentage"
+//             type="number"
+//             value={newDiscount.percentage}
+//             onChange={(e) =>
+//               setNewDiscount({ ...newDiscount, percentage: e.target.value })
+//             }
+//           />
+//           <button onClick={handleCreateDiscount}>Add</button>
+//         </div>
+
+//         <table className="crud-table">
+//           <thead>
+//             <tr>
+//               <th>Code</th>
+//               <th>Discount %</th>
+//               <th>Actions</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {discounts.length > 0 ? (
+//               discounts.map((d) =>
+//                 editingDiscount?._id === d._id ? (
+//                   <tr key={d._id}>
+//                     <td>
+//                       <input
+//                         value={editingDiscount.code}
+//                         onChange={(e) =>
+//                           setEditingDiscount({
+//                             ...editingDiscount,
+//                             code: e.target.value,
+//                           })
+//                         }
+//                       />
+//                     </td>
+//                     <td>
+//                       <input
+//                         type="number"
+//                         value={editingDiscount.discountPercentage}
+//                         onChange={(e) =>
+//                           setEditingDiscount({
+//                             ...editingDiscount,
+//                             discountPercentage: e.target.value,
+//                           })
+//                         }
+//                       />
+//                     </td>
+//                     <td>
+//                       <button onClick={handleUpdateDiscount}>💾 Save</button>
+//                       <button onClick={() => setEditingDiscount(null)}>
+//                         ✖ Cancel
+//                       </button>
+//                     </td>
+//                   </tr>
+//                 ) : (
+//                   <tr key={d._id}>
+//                     <td>{d.code}</td>
+//                     <td>{d.discountPercentage}</td>
+//                     <td>
+//                       <button onClick={() => handleEditDiscount(d)}>✏ Edit</button>
+//                       <button onClick={() => handleDeleteDiscount(d._id)}>🗑 Delete</button>
+//                     </td>
+//                   </tr>
+//                 )
+//               )
+//             ) : (
+//               <tr>
+//                 <td colSpan="3">No Discounts Available</td>
+//               </tr>
+//             )}
+//           </tbody>
+//         </table>
+//       </section>
+
+//       {/* ===================== PAYMENT ===================== */}
+//       <section className="card">
+//         <h2>💳 Make Payment</h2>
+//         <div className="form-inline">
+//           <input
+//             placeholder="Name"
+//             value={payName}
+//             onChange={(e) => setPayName(e.target.value)}
+//           />
+//           <input
+//             placeholder="Email"
+//             value={payEmail}
+//             onChange={(e) => setPayEmail(e.target.value)}
+//           />
+//           <input
+//             placeholder="Amount"
+//             type="number"
+//             value={payAmount}
+//             onChange={(e) => setPayAmount(e.target.value)}
+//           />
+//           <button onClick={handlePayment}>Pay Now</button>
+//         </div>
+//       </section>
+      
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
 import React, { useState, useEffect } from "react";
 import {
   getPlans,
@@ -1063,35 +1527,26 @@ import {
 import "./WalletPage.css";
 
 export default function WalletPage({ user: propUser }) {
-  // ✅ Auto load user
   const [user, setUser] = useState(propUser || null);
-
-  useEffect(() => {
-    if (!propUser) {
-      const savedUser = JSON.parse(localStorage.getItem("user"));
-      if (savedUser) {
-        setUser(savedUser);
-        console.log("✅ Loaded user from localStorage:", savedUser);
-      } else {
-        console.warn("⚠ No user found in props or localStorage.");
-      }
-    }
-  }, [propUser]);
-
   const [plans, setPlans] = useState([]);
   const [newPlan, setNewPlan] = useState({ name: "", amount: "", interval: "monthly" });
   const [editingPlan, setEditingPlan] = useState(null);
-
   const [referrals, setReferrals] = useState([]);
   const [discounts, setDiscounts] = useState([]);
   const [newDiscount, setNewDiscount] = useState({ code: "", percentage: "" });
   const [editingDiscount, setEditingDiscount] = useState(null);
-
   const [payName, setPayName] = useState("");
   const [payEmail, setPayEmail] = useState("");
   const [payAmount, setPayAmount] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // 🧩 Auto-fill name/email once user loads
+  useEffect(() => {
+    if (!propUser) {
+      const savedUser = JSON.parse(localStorage.getItem("user"));
+      if (savedUser) setUser(savedUser);
+    }
+  }, [propUser]);
+
   useEffect(() => {
     if (user) {
       setPayName(user.name || "");
@@ -1099,7 +1554,6 @@ export default function WalletPage({ user: propUser }) {
     }
   }, [user]);
 
-  // ✅ Fetch data
   useEffect(() => {
     const fetchData = async () => {
       const [plansData, refsData, discData] = await Promise.all([
@@ -1114,389 +1568,191 @@ export default function WalletPage({ user: propUser }) {
     fetchData();
   }, []);
 
-  /* ===========================================================
-     🔹 PLANS CRUD
-  =========================================================== */
   const handleCreatePlan = async () => {
-    if (!newPlan.name || !newPlan.amount) return alert("Name & Amount required");
+    if (!newPlan.name || !newPlan.amount) return alert("Required fields missing");
     await createPlan(newPlan);
     setNewPlan({ name: "", amount: "", interval: "monthly" });
     setPlans(await getPlans());
   };
 
-  const handleEditPlan = (plan) => setEditingPlan({ ...plan });
   const handleUpdatePlan = async () => {
     await updatePlan(editingPlan._id, editingPlan);
     setEditingPlan(null);
     setPlans(await getPlans());
   };
 
-  const handleDeletePlan = async (id) => {
-    if (window.confirm("Delete this plan?")) {
-      await deletePlan(id);
-      setPlans(await getPlans());
-    }
-  };
-
-  /* ===========================================================
-     🔹 REFERRALS
-  =========================================================== */
-  const handleApproveReferral = async (id) => {
-    await approveReferral(id);
-    setReferrals(await getReferrals());
-  };
-
-  const handleDeleteReferral = async (id) => {
-    if (window.confirm("Delete this referral?")) {
-      await deleteReferral(id);
-      setReferrals(await getReferrals());
-    }
-  };
-
-  /* ===========================================================
-     🔹 DISCOUNTS CRUD
-  =========================================================== */
   const handleCreateDiscount = async () => {
-    if (!newDiscount.code || !newDiscount.percentage)
-      return alert("Code & Percentage required");
-    await createDiscount({
-      code: newDiscount.code,
-      discountPercentage: newDiscount.percentage,
-    });
+    if (!newDiscount.code || !newDiscount.percentage) return alert("Required fields missing");
+    await createDiscount({ code: newDiscount.code, discountPercentage: newDiscount.percentage });
     setNewDiscount({ code: "", percentage: "" });
     setDiscounts((await getDiscounts()).discounts || []);
   };
 
-  const handleEditDiscount = (d) => setEditingDiscount({ ...d });
-  const handleUpdateDiscount = async () => {
-    await updateDiscount(editingDiscount._id, editingDiscount);
-    setEditingDiscount(null);
-    setDiscounts((await getDiscounts()).discounts || []);
-  };
-
-  const handleDeleteDiscount = async (id) => {
-    if (window.confirm("Delete this discount?")) {
-      await deleteDiscount(id);
-      setDiscounts((await getDiscounts()).discounts || []);
-    }
-  };
-
-  /* ===========================================================
-     💳 PAYMENT (FIXED VERSION)
-  =========================================================== */
   const handlePayment = async () => {
-    console.log("🧑‍💻 User before payment:", user);
-
-    if (!payName || !payEmail || !payAmount)
-      return alert("All fields required");
-
-    const testUserId = "672af93b9cf24a87a0c5f8de"; // fallback for testing
-    const userId = user?._id || testUserId;
+    if (!payName || !payEmail || !payAmount) return alert("All fields required");
+    const userId = user?._id || "672af93b9cf24a87a0c5f8de";
 
     try {
+      setLoading(true);
       const amount = Number(payAmount);
-      if (isNaN(amount) || amount <= 0) return alert("Invalid amount");
-
       const response = await createOrder({ amount, userId });
-      console.log("📦 Order Response:", response);
 
-      if (!response?.success || !response?.order)
-        return alert("Order creation failed!");
+      if (!response?.success) throw new Error("Order failed");
 
       const rzp = new window.Razorpay({
-        // key: process.env.REACT_APP_RAZORPAY_KEY_ID,
         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
         amount: response.order.amount,
         currency: response.order.currency,
         name: "Astrology App",
-        description: "Astrology Services Payment",
         order_id: response.order.id,
         handler: async (res) => {
-          alert("✅ Payment Successful!");
-          await verifyPayment({
-            ...res,
-            amount,
-            userId,
-          });
+          alert("Payment Successful");
+          await verifyPayment({ ...res, amount, userId });
         },
-        prefill: {
-          name: payName,
-          email: payEmail,
-        },
-        theme: { color: "#3399cc" },
+        prefill: { name: payName, email: payEmail },
+        theme: { color: "#4F46E5" },
       });
-
-      rzp.on("payment.failed", function (err) {
-        console.error("❌ Payment failed:", err.error);
-        alert("Payment failed. Please try again.");
-      });
-
       rzp.open();
     } catch (e) {
-      console.error("❌ Payment Error:", e);
-      alert("Payment failed, check console logs.");
+      alert("Payment Error");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="wallet-container">
-      <h1>💰 Wallet & Payment Dashboard</h1>
+    <div className="wallet-page">
+      <div className="wallet-header">
+        <h1>Financial Dashboard</h1>
+        {user ? (
+          <div className="user-badge">
+            <span className="dot"></span> {user.name} ({user.email})
+          </div>
+        ) : (
+          <div className="user-badge warning">Session Inactive - Please Login</div>
+        )}
+      </div>
 
-      {/* ✅ Show logged-in user */}
-      {user ? (
-        <div className="user-card">
-          <strong>Logged in as:</strong> {user.name} ({user.email})
-        </div>
-      ) : (
-        <div className="user-card warning">⚠ Please log in first</div>
-      )}
+      <div className="wallet-grid">
+        {/* Payment Section */}
+        <section className="wallet-card highlight">
+          <h2 className="card-title">Quick Payment</h2>
+          <div className="form-stack">
+            <input placeholder="Name" value={payName} onChange={(e) => setPayName(e.target.value)} />
+            <input placeholder="Email" value={payEmail} onChange={(e) => setPayEmail(e.target.value)} />
+            <input type="number" placeholder="Amount (INR)" value={payAmount} onChange={(e) => setPayAmount(e.target.value)} />
+            <button className="btn-primary" onClick={handlePayment} disabled={loading}>
+              {loading ? "Processing..." : "Secure Checkout"}
+            </button>
+          </div>
+        </section>
 
-      {/* ===================== PLANS ===================== */}
-      <section className="card">
-        <h2>📦 Subscription Plans</h2>
-        <div className="form-inline">
-          <input
-            placeholder="Name"
-            value={newPlan.name}
-            onChange={(e) => setNewPlan({ ...newPlan, name: e.target.value })}
-          />
-          <input
-            placeholder="Amount"
-            type="number"
-            value={newPlan.amount}
-            onChange={(e) => setNewPlan({ ...newPlan, amount: e.target.value })}
-          />
-          <select
-            value={newPlan.interval}
-            onChange={(e) => setNewPlan({ ...newPlan, interval: e.target.value })}
-          >
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-            <option value="yearly">Yearly</option>
-          </select>
-          <button onClick={handleCreatePlan}>Add</button>
-        </div>
+        {/* Plans Section */}
+        <section className="wallet-card">
+          <h2 className="card-title">Subscription Plans</h2>
+          <div className="form-grid">
+            <input placeholder="Name" value={newPlan.name} onChange={(e) => setNewPlan({ ...newPlan, name: e.target.value })} />
+            <input type="number" placeholder="Amount" value={newPlan.amount} onChange={(e) => setNewPlan({ ...newPlan, amount: e.target.value })} />
+            <select value={newPlan.interval} onChange={(e) => setNewPlan({ ...newPlan, interval: e.target.value })}>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+            <button className="btn-success" onClick={handleCreatePlan}>Create</button>
+          </div>
 
-        <table className="crud-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Amount (₹)</th>
-              <th>Interval</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {plans.length > 0 ? (
-              plans.map((p) =>
-                editingPlan?._id === p._id ? (
-                  <tr key={p._id}>
-                    <td>
-                      <input
-                        value={editingPlan.name}
-                        onChange={(e) =>
-                          setEditingPlan({ ...editingPlan, name: e.target.value })
-                        }
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        value={editingPlan.amount}
-                        onChange={(e) =>
-                          setEditingPlan({
-                            ...editingPlan,
-                            amount: e.target.value,
-                          })
-                        }
-                      />
-                    </td>
-                    <td>
-                      <select
-                        value={editingPlan.interval}
-                        onChange={(e) =>
-                          setEditingPlan({
-                            ...editingPlan,
-                            interval: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
-                        <option value="yearly">Yearly</option>
-                      </select>
-                    </td>
-                    <td>
-                      <button onClick={handleUpdatePlan}>💾 Save</button>
-                      <button onClick={() => setEditingPlan(null)}>✖ Cancel</button>
-                    </td>
-                  </tr>
-                ) : (
+          <div className="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Plan</th>
+                  <th>Rate</th>
+                  <th>Cycle</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {plans.map((p) => (
                   <tr key={p._id}>
                     <td>{p.name}</td>
-                    <td>{p.amount}</td>
-                    <td>{p.interval}</td>
+                    <td>₹{p.amount}</td>
+                    <td><span className="pill">{p.interval}</span></td>
                     <td>
-                      <button onClick={() => handleEditPlan(p)}>✏ Edit</button>
-                      <button onClick={() => handleDeletePlan(p._id)}>🗑 Delete</button>
+                      <button className="btn-icon" onClick={() => handleDeletePlan(p._id)}>Delete</button>
                     </td>
                   </tr>
-                )
-              )
-            ) : (
-              <tr>
-                <td colSpan="4">No Plans Available</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </section>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-      {/* ===================== REFERRALS ===================== */}
-      <section className="card">
-        <h2>🎯 Referrals</h2>
-        <table className="crud-table">
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Status</th>
-              <th>User</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {referrals.length > 0 ? (
-              referrals.map((r) => (
-                <tr key={r._id}>
-                  <td>{r.code}</td>
-                  <td>{r.approved ? "✅ Approved" : "❌ Pending"}</td>
-                  <td>{r.user?.name || "N/A"}</td>
-                  <td>
-                    {!r.approved && (
-                      <button onClick={() => handleApproveReferral(r._id)}>✔ Approve</button>
-                    )}
-                    <button onClick={() => handleDeleteReferral(r._id)}>🗑 Delete</button>
-                  </td>
+        {/* Discounts Section */}
+        <section className="wallet-card">
+          <h2 className="card-title">Promotional Codes</h2>
+          <div className="form-grid">
+            <input placeholder="Code" value={newDiscount.code} onChange={(e) => setNewDiscount({ ...newDiscount, code: e.target.value })} />
+            <input type="number" placeholder="%" value={newDiscount.percentage} onChange={(e) => setNewDiscount({ ...newDiscount, percentage: e.target.value })} />
+            <button className="btn-success" onClick={handleCreateDiscount}>Add</button>
+          </div>
+          <div className="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Value</th>
+                  <th>Actions</th>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4">No Referrals Found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </section>
-
-      {/* ===================== DISCOUNTS ===================== */}
-      <section className="card">
-        <h2>🏷 Discounts</h2>
-        <div className="form-inline">
-          <input
-            placeholder="Code"
-            value={newDiscount.code}
-            onChange={(e) =>
-              setNewDiscount({ ...newDiscount, code: e.target.value })
-            }
-          />
-          <input
-            placeholder="Percentage"
-            type="number"
-            value={newDiscount.percentage}
-            onChange={(e) =>
-              setNewDiscount({ ...newDiscount, percentage: e.target.value })
-            }
-          />
-          <button onClick={handleCreateDiscount}>Add</button>
-        </div>
-
-        <table className="crud-table">
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Discount %</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {discounts.length > 0 ? (
-              discounts.map((d) =>
-                editingDiscount?._id === d._id ? (
+              </thead>
+              <tbody>
+                {discounts.map((d) => (
                   <tr key={d._id}>
+                    <td className="code-text">{d.code}</td>
+                    <td>{d.discountPercentage}%</td>
                     <td>
-                      <input
-                        value={editingDiscount.code}
-                        onChange={(e) =>
-                          setEditingDiscount({
-                            ...editingDiscount,
-                            code: e.target.value,
-                          })
-                        }
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        value={editingDiscount.discountPercentage}
-                        onChange={(e) =>
-                          setEditingDiscount({
-                            ...editingDiscount,
-                            discountPercentage: e.target.value,
-                          })
-                        }
-                      />
-                    </td>
-                    <td>
-                      <button onClick={handleUpdateDiscount}>💾 Save</button>
-                      <button onClick={() => setEditingDiscount(null)}>
-                        ✖ Cancel
-                      </button>
+                      <button className="btn-icon" onClick={() => handleDeleteDiscount(d._id)}>Delete</button>
                     </td>
                   </tr>
-                ) : (
-                  <tr key={d._id}>
-                    <td>{d.code}</td>
-                    <td>{d.discountPercentage}</td>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* Referrals Section */}
+        <section className="wallet-card full-width">
+          <h2 className="card-title">Affiliate Referrals</h2>
+          <div className="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>User</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {referrals.map((r) => (
+                  <tr key={r._id}>
+                    <td>{r.code}</td>
+                    <td>{r.user?.name || "Anonymous"}</td>
                     <td>
-                      <button onClick={() => handleEditDiscount(d)}>✏ Edit</button>
-                      <button onClick={() => handleDeleteDiscount(d._id)}>🗑 Delete</button>
+                      <span className={r.approved ? "status-ok" : "status-pending"}>
+                        {r.approved ? "Approved" : "Pending"}
+                      </span>
+                    </td>
+                    <td>
+                      {!r.approved && <button className="btn-outline" onClick={() => handleApproveReferral(r._id)}>Approve</button>}
+                      <button className="btn-icon" onClick={() => handleDeleteReferral(r._id)}>Remove</button>
                     </td>
                   </tr>
-                )
-              )
-            ) : (
-              <tr>
-                <td colSpan="3">No Discounts Available</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </section>
-
-      {/* ===================== PAYMENT ===================== */}
-      <section className="card">
-        <h2>💳 Make Payment</h2>
-        <div className="form-inline">
-          <input
-            placeholder="Name"
-            value={payName}
-            onChange={(e) => setPayName(e.target.value)}
-          />
-          <input
-            placeholder="Email"
-            value={payEmail}
-            onChange={(e) => setPayEmail(e.target.value)}
-          />
-          <input
-            placeholder="Amount"
-            type="number"
-            value={payAmount}
-            onChange={(e) => setPayAmount(e.target.value)}
-          />
-          <button onClick={handlePayment}>Pay Now</button>
-        </div>
-      </section>
-      
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

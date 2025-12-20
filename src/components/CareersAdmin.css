@@ -1,0 +1,169 @@
+/* General Layout */
+.admin-wrapper {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1.25rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #1a202c;
+  line-height: 1.5;
+}
+
+.admin-header {
+  margin-bottom: 3rem;
+  border-bottom: 2px solid #edf2f7;
+  padding-bottom: 1.5rem;
+}
+
+.admin-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: #2d3748;
+}
+
+.admin-header p {
+  color: #718096;
+  font-size: 1.1rem;
+}
+
+/* Card Styling */
+.admin-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #4a5568;
+}
+
+/* Form Inputs */
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+}
+
+.input-group input, 
+.input-group textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.input-group input:focus, 
+.input-group textarea:focus {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+}
+
+/* Grid Layout for Careers */
+.careers-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Default: 1 column */
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .careers-grid {
+    grid-template-columns: repeat(2, 1fr); /* Tablet/Desktop: 2 columns */
+  }
+}
+
+.career-item-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.career-info h3 {
+  font-size: 1.15rem;
+  margin: 0 0 0.75rem 0;
+  color: #2d3748;
+}
+
+.career-info p {
+  font-size: 0.95rem;
+  color: #718096;
+  margin-bottom: 1.5rem;
+}
+
+/* Buttons */
+.primary-button {
+  background-color: #3182ce;
+  color: white;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.primary-button:hover {
+  background-color: #2b6cb0;
+}
+
+.delete-button {
+  background: transparent;
+  color: #e53e3e;
+  border: 1px solid #e53e3e;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.delete-button:hover {
+  background: #e53e3e;
+  color: white;
+}
+
+/* Utilities */
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.count-badge {
+  background: #ebf8ff;
+  color: #2b6cb0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #a0aec0;
+  border: 2px dashed #edf2f7;
+  border-radius: 12px;
+}

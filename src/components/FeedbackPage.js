@@ -399,7 +399,7 @@ const FeedbackPage = () => {
 
   return (
     <div className="feedback-container">
-      <h2>💬 Feedback Management</h2>
+      <h2>Feedback Management</h2>
 
       <button className="add-btn" onClick={() => setShowForm(!showForm)}>
         {showForm ? "Hide Form" : "Add Feedback"}
@@ -447,7 +447,7 @@ const FeedbackPage = () => {
         </form>
       )}
 
-      <h3>📋 All Feedbacks</h3>
+      <h3>All Feedbacks</h3>
       {feedbacks.length === 0 ? (
         <p>No feedback found.</p>
       ) : (

@@ -341,7 +341,7 @@
 
 // // //   return (
 // // //     <div className="orders-page">
-// // //       <h2 className="heading">🧾 Order Management</h2>
+// // //       <h2 className="heading"> Order Management</h2>
 
 // // //       {/* 🔍 Search */}
 // // //       <input
@@ -567,7 +567,7 @@
 
 // //   return (
 // //     <div className="orders-page">
-// //       <h2 className="heading">🧾 Order Management</h2>
+// //       <h2 className="heading"> Order Management</h2>
 
 // //       {/* Search Bar */}
 // //       <input
@@ -798,7 +798,7 @@
 
 //   return (
 //     <div className="orders-page">
-//       <h2 className="heading">🧾 Order Management</h2>
+//       <h2 className="heading"> Order Management</h2>
 
 //       {/* Search */}
 //       <input
@@ -925,14 +925,15 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Loader2, PlusCircle, Trash2, Edit2, CheckCircle } from "lucide-react";
-import "./Orders.css";
+import "./EnergyServicesForm.css"; // reuse SAME admin css
 
 const API = `${process.env.REACT_APP_API_URL}/orders`;
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [search, setSearch] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     customerName: "",
@@ -943,23 +944,14 @@ export default function Orders() {
     file: null,
   });
 
-  const [editingId, setEditingId] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  // ============================
-  // Fetch Orders
-  // ============================
+  // ================= FETCH =================
   const fetchOrders = async () => {
     try {
       const res = await axios.get(`${API}?search=${search}`);
-
-      console.log("API RESPONSE:", res.data);
-
-      // VALIDATE response
       setOrders(Array.isArray(res.data.orders) ? res.data.orders : []);
     } catch (err) {
       console.error("Fetch error", err);
-      setOrders([]); // prevent crash
+      setOrders([]);
     }
   };
 
@@ -967,9 +959,7 @@ export default function Orders() {
     fetchOrders();
   }, [search]);
 
-  // ============================
-  // Handle Form Change
-  // ============================
+  // ================= CHANGE =================
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (files) {
@@ -979,9 +969,7 @@ export default function Orders() {
     }
   };
 
-  // ============================
-  // Submit Form
-  // ============================
+  // ================= SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -1008,23 +996,14 @@ export default function Orders() {
     }
   };
 
-  // ============================
-  // Delete Order
-  // ============================
+  // ================= DELETE =================
   const deleteOrder = async (id) => {
     if (!window.confirm("Delete this order?")) return;
-
-    try {
-      await axios.delete(`${API}/${id}`);
-      fetchOrders();
-    } catch (err) {
-      console.error("Delete failed", err);
-    }
+    await axios.delete(`${API}/${id}`);
+    fetchOrders();
   };
 
-  // ============================
-  // Edit Order
-  // ============================
+  // ================= EDIT =================
   const editOrder = (order) => {
     setEditingId(order._id);
     setForm({
@@ -1037,9 +1016,7 @@ export default function Orders() {
     });
   };
 
-  // ============================
-  // Reset
-  // ============================
+  // ================= RESET =================
   const resetForm = () => {
     setEditingId(null);
     setForm({
@@ -1053,21 +1030,23 @@ export default function Orders() {
   };
 
   return (
-    <div className="orders-page">
-      <h2 className="heading">🧾 Order Management</h2>
+    <div className="energy-wrapper">
+      <h2 className="energy-title">Order Management – Admin Panel</h2>
 
-      {/* Search */}
+      {/* SEARCH */}
       <input
+        className="energy-input"
         type="text"
         placeholder="Search by customer name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="search-input"
+        style={{ maxWidth: 300, marginBottom: 20 }}
       />
 
-      {/* Form */}
-      <form className="order-form" onSubmit={handleSubmit}>
+      {/* FORM */}
+      <form className="energy-form" onSubmit={handleSubmit}>
         <input
+          className="energy-input"
           type="text"
           name="customerName"
           placeholder="Customer Name"
@@ -1077,6 +1056,7 @@ export default function Orders() {
         />
 
         <input
+          className="energy-input"
           type="email"
           name="email"
           placeholder="Email"
@@ -1086,6 +1066,7 @@ export default function Orders() {
         />
 
         <input
+          className="energy-input"
           type="text"
           name="serviceType"
           placeholder="Service Type"
@@ -1095,6 +1076,7 @@ export default function Orders() {
         />
 
         <input
+          className="energy-input"
           type="number"
           name="price"
           placeholder="Price"
@@ -1103,32 +1085,54 @@ export default function Orders() {
           required
         />
 
-        <select name="status" value={form.status} onChange={handleChange}>
+        <select
+          className="energy-input"
+          name="status"
+          value={form.status}
+          onChange={handleChange}
+        >
           <option value="Pending">Pending</option>
           <option value="In Progress">In Progress</option>
           <option value="Completed">Completed</option>
         </select>
 
-        <input type="file" name="file" onChange={handleChange} />
+        <input
+          className="energy-input"
+          type="file"
+          name="file"
+          onChange={handleChange}
+        />
 
-        <button type="submit" className="submit-btn" disabled={loading}>
-          {loading ? (
-            <Loader2 className="spinner" />
-          ) : editingId ? (
-            <>
-              <CheckCircle size={18} /> Update Order
-            </>
-          ) : (
-            <>
-              <PlusCircle size={18} /> Create Order
-            </>
+        <div className="energy-btn-group">
+          <button
+            type="submit"
+            className="btn-primary"
+            disabled={loading}
+          >
+            {loading
+              ? "Saving..."
+              : editingId
+              ? "Update Order"
+              : "Create Order"}
+          </button>
+
+          {editingId && (
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={resetForm}
+            >
+              Cancel
+            </button>
           )}
-        </button>
+        </div>
       </form>
 
-      {/* Orders Table */}
-      <div className="orders-table">
-        <table>
+      {/* TABLE */}
+      <h3 className="energy-subtitle">All Orders</h3>
+
+      <div className="energy-table-wrapper">
+        <table className="energy-table">
           <thead>
             <tr>
               <th>Customer</th>
@@ -1142,47 +1146,49 @@ export default function Orders() {
           </thead>
 
           <tbody>
-            {Array.isArray(orders) && orders.length > 0 ? (
+            {orders.length ? (
               orders.map((o) => (
                 <tr key={o._id}>
-                  <td>{o.customerName}</td>
-                  <td>{o.email}</td>
-                  <td>{o.serviceType}</td>
-                  <td>₹{o.price}</td>
-                  <td>{o.status}</td>
-
-                  <td>
+                  <td data-label="Customer">{o.customerName}</td>
+                  <td data-label="Email">{o.email}</td>
+                  <td data-label="Service">{o.serviceType}</td>
+                  <td data-label="Price">₹{o.price}</td>
+                  <td data-label="Status">{o.status}</td>
+                  <td data-label="File">
                     {o.fileUrl ? (
-                      <a href={o.fileUrl} target="_blank" rel="noreferrer">
+                      <a
+                        href={o.fileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         View
                       </a>
                     ) : (
                       "—"
                     )}
                   </td>
-
-                  <td>
+                  <td
+                    data-label="Actions"
+                    className="energy-actions"
+                  >
                     <button
+                      className="btn-edit"
                       onClick={() => editOrder(o)}
-                      className="edit-btn"
                     >
-                      <Edit2 size={16} />
+                      Edit
                     </button>
-
                     <button
+                      className="bg-red-500 text-white px-4 py-2"
                       onClick={() => deleteOrder(o._id)}
-                      className="delete-btn"
                     >
-                      <Trash2 size={16} />
+                      Delete
                     </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="7" style={{ textAlign: "center" }}>
-                  No orders found
-                </td>
+                <td colSpan="7">No orders found</td>
               </tr>
             )}
           </tbody>

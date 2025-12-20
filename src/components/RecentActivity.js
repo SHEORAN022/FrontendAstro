@@ -38,9 +38,9 @@ const socket = io(process.env.REACT_APP_BACKEND_URL || "https://astrobackend-5sr
 
 // Default static data (fallback)
 const defaultActivities = [
-  { id: 1, text: "Order #A12 uploaded PDF", time: "2 mins ago", icon: "📄" },
-  { id: 2, text: "New user registered: test@example.com", time: "10 mins ago", icon: "👤" },
-  { id: 3, text: "Payment received from #A09", time: "1 hour ago", icon: "💸" },
+  { id: 1, text: "Order #A12 uploaded PDF", time: "2 mins ago" },
+  { id: 2, text: "New user registered: test@example.com", time: "10 mins ago" },
+  { id: 3, text: "Payment received from #A09", time: "1 hour ago" },
 ];
 
 export default function RecentActivity() {
@@ -103,9 +103,7 @@ export default function RecentActivity() {
               onClick={() => handleClick(activity.text)}
               style={{ cursor: "pointer" }}
             >
-              <span>
-                {activity.icon} {activity.text}
-              </span>
+              <span>{activity.text}</span>
               <span className="time">{activity.time}</span>
             </li>
           ))}

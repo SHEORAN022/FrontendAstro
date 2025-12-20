@@ -189,10 +189,10 @@ export default function AboutUsAdmin() {
 
   return (
     <div className="about-admin-container">
-      <h2 className="admin-title">📄 About Us — Admin</h2>
+      <h2 className="admin-title">About Us — Admin</h2>
 
       <button className="add-btn" onClick={openModal}>
-        {about ? "✏ Edit" : "➕ Add New"}
+        {about ? "Edit" : "Add New"}
       </button>
 
       {/* TABLE */}
@@ -222,8 +222,8 @@ export default function AboutUsAdmin() {
                 />
               </td>
               <td>
-                <button className="edit-btn" onClick={openModal}>✏ Edit</button>
-                <button className="delete-btn" onClick={deleteAbout}>🗑 Delete</button>
+                <button className="edit-btn" onClick={openModal}>Edit</button>
+                <button className="delete-btn" onClick={deleteAbout}>Delete</button>
               </td>
             </tr>
           </tbody>
@@ -262,7 +262,7 @@ export default function AboutUsAdmin() {
 
             <div className="modal-actions">
               <button className="save-btn" onClick={saveAbout}>
-                💾 Save
+                Save
               </button>
               <button className="cancel-btn" onClick={() => setShowModal(false)}>
                 Cancel

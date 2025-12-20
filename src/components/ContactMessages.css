@@ -1,0 +1,158 @@
+:root {
+  --primary: #4f46e5;
+  --primary-dark: #4338ca;
+  --bg: #f8fafc;
+  --white: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --danger: #ef4444;
+}
+
+.contact-admin-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-main);
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.admin-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.btn-add {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-add:hover { background: var(--primary-dark); }
+
+/* Form Card */
+.form-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-grid input, .form-grid select, .form-grid textarea {
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+.full-span { grid-column: 1 / -1; }
+
+.form-actions { display: flex; gap: 0.75rem; }
+.btn-save { background: var(--primary); color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer; }
+.btn-cancel { background: #f1f5f9; color: var(--text-muted); border: none; padding: 0.6rem 1.5rem; border-radius: 6px; cursor: pointer; }
+
+/* Table Styling (Desktop) */
+.table-wrapper {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.responsive-table thead {
+  background: #f8fafc;
+}
+
+.responsive-table th {
+  text-align: left;
+  padding: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+
+.responsive-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.action-btns { display: flex; gap: 1rem; }
+.edit-btn { background: none; border: none; color: var(--primary); font-weight: 600; cursor: pointer; }
+.delete-btn { background: none; border: none; color: var(--danger); font-weight: 600; cursor: pointer; }
+
+/* Mobile Transformation (Cards) */
+@media (max-width: 768px) {
+  .responsive-table thead {
+    display: none; /* Hide headers on mobile */
+  }
+
+  .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .responsive-table tr {
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--primary);
+    padding: 1rem;
+  }
+
+  .responsive-table td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .responsive-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1rem;
+    width: 45%;
+    font-weight: 700;
+    text-align: left;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+  }
+
+  .responsive-table td:last-child {
+    border-bottom: none;
+    padding-left: 0;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  .action-btns { justify-content: center; }
+}

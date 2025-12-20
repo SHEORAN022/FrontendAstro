@@ -764,12 +764,12 @@ const socket = io(process.env.REACT_APP_BACKEND_URL || "https://astrobackend-5sr
 
 export default function QuickActions() {
   const actions = [
-    { label: "Upload Report", emoji: "📄" },
-    { label: "Add Remedy / Ritual", emoji: "💊" },
-    { label: "Schedule Call", emoji: "📞" },
-    { label: "Push Broadcast", emoji: "📣" },
-    { label: "Create New Service / Form", emoji: "📝" },
-    { label: "Set Consultation Slot", emoji: "🕒" },
+    { label: "Upload Report" },
+    { label: "Add Remedy / Ritual" },
+    { label: "Schedule Call" },
+    { label: "Push Broadcast" },
+    { label: "Create New Service / Form" },
+    { label: "Set Consultation Slot" },
   ];
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -956,7 +956,7 @@ export default function QuickActions() {
       <div className="actions-grid">
         {actions.map((action, i) => (
           <button key={i} className="action-btn" onClick={() => openModal(action.label)}>
-            <span className="emoji">{action.emoji}</span> {action.label}
+            {action.label}
           </button>
         ))}
       </div>

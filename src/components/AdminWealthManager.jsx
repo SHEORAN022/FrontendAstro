@@ -52,7 +52,7 @@ export default function AdminWealthManager() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>💰 My Wealth Tools (Admin)</h2>
+      <h2> My Wealth Tools (Admin)</h2>
 
       {/* ===== UPLOAD FORM ===== */}
       <div

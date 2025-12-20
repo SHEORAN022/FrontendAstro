@@ -1,188 +1,6 @@
-
-// import React, { useEffect, useState } from "react";
-// import {
-//   fetchTemplates,
-//   saveTemplate,
-//   updateTemplate,
-//   deleteTemplate,
-// } from "../../api/api";
-
-// export default function TemplateEditor() {
-//   const [templates, setTemplates] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [editingId, setEditingId] = useState(null);
-//   const [name, setName] = useState("");
-//   const [type, setType] = useState("email");
-//   const [subject, setSubject] = useState("");
-//   const [body, setBody] = useState("");
-
-//   // Load templates on mount
-//   useEffect(() => {
-//     loadTemplates();
-//   }, []);
-
-//   const loadTemplates = async () => {
-//     try {
-//       const res = await fetchTemplates();
-//       setTemplates(res.data.data || []);
-//     } catch (err) {
-//       console.error("Error fetching templates:", err);
-//       setTemplates([]);
-//     }
-//   };
-
-//   const resetForm = () => {
-//     setName("");
-//     setType("email");
-//     setSubject("");
-//     setBody("");
-//     setEditingId(null);
-//   };
-
-//   const handleSave = async () => {
-//     if (!name.trim() || !body.trim()) return alert("Name and body are required!");
-
-//     setLoading(true);
-//     try {
-//       const payload = { name, type, body };
-//       if (type === "email") payload.subject = subject;
-
-//       if (editingId) {
-//         await updateTemplate(editingId, payload);
-//         alert("Template updated successfully!");
-//       } else {
-//         await saveTemplate(payload);
-//         alert("Template created successfully!");
-//       }
-
-//       resetForm();
-//       loadTemplates();
-//     } catch (err) {
-//       console.error("Error saving template:", err);
-//       alert("Failed to save template.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleEdit = (template) => {
-//     setEditingId(template._id);
-//     setName(template.name);
-//     setType(template.type);
-//     setSubject(template.subject || "");
-//     setBody(template.body);
-//   };
-
-//   const handleDelete = async (id) => {
-//     if (!window.confirm("Are you sure you want to delete this template?")) return;
-//     try {
-//       await deleteTemplate(id);
-//       alert("Template deleted!");
-//       loadTemplates();
-//     } catch (err) {
-//       console.error("Error deleting template:", err);
-//       alert("Failed to delete template.");
-//     }
-//   };
-
-//   return (
-//     <div style={{ maxWidth: 700, margin: "auto", padding: 20 }}>
-//       <h2>{editingId ? "Edit Template" : "Create Template"}</h2>
-
-//       <input
-//         placeholder="Name"
-//         value={name}
-//         onChange={(e) => setName(e.target.value)}
-//         style={styles.input}
-//       />
-
-//       <select value={type} onChange={(e) => setType(e.target.value)} style={styles.input}>
-//         <option value="email">Email</option>
-//         <option value="whatsapp">WhatsApp</option>
-//       </select>
-
-//       {type === "email" && (
-//         <input
-//           placeholder="Subject"
-//           value={subject}
-//           onChange={(e) => setSubject(e.target.value)}
-//           style={styles.input}
-//         />
-//       )}
-
-//       <textarea
-//         placeholder="Body"
-//         value={body}
-//         onChange={(e) => setBody(e.target.value)}
-//         style={{ ...styles.input, height: 100 }}
-//       />
-
-//       <button onClick={handleSave} disabled={loading} style={styles.button}>
-//         {loading ? "Saving..." : editingId ? "Update Template" : "Save Template"}
-//       </button>
-
-//       <hr style={{ margin: "20px 0" }} />
-
-//       <h3>All Templates</h3>
-//       {templates.length === 0 && <p>No templates found.</p>}
-//       {templates.map((t) => (
-//         <div key={t._id} style={styles.templateCard}>
-//           <strong>{t.name}</strong> ({t.type})
-//           {t.type === "email" && <div>Subject: {t.subject}</div>}
-//           <div>Body: {t.body}</div>
-//           <button onClick={() => handleEdit(t)} style={styles.smallButton}>
-//             Edit
-//           </button>
-//           <button onClick={() => handleDelete(t._id)} style={styles.smallButtonDelete}>
-//             Delete
-//           </button>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// }
-
-// const styles = {
-//   input: {
-//     width: "100%",
-//     padding: 10,
-//     marginBottom: 12,
-//     borderRadius: 6,
-//     border: "1px solid #ccc",
-//   },
-//   button: {
-//     padding: 10,
-//     width: "100%",
-//     border: "none",
-//     borderRadius: 6,
-//     backgroundColor: "#3b82f6",
-//     color: "#fff",
-//     cursor: "pointer",
-//     marginBottom: 20,
-//   },
-//   templateCard: {
-//     background: "#f1f5f9",
-//     padding: 10,
-//     marginBottom: 10,
-//     borderRadius: 6,
-//   },
-//   smallButton: {
-//     marginRight: 10,
-//     padding: "4px 8px",
-//     cursor: "pointer",
-//   },
-//   smallButtonDelete: {
-//     padding: "4px 8px",
-//     cursor: "pointer",
-//     backgroundColor: "#ef4444",
-//     color: "#fff",
-//     border: "none",
-//     borderRadius: 4,
-//   },
-// };
-
 import React, { useEffect, useState } from "react";
-import { fetchTemplates, saveTemplate, updateTemplate, deleteTemplate } from "../../api/api";
+import { fetchTemplates, saveTemplate, deleteTemplate } from "../../api/api";
+import "./TemplateEditor.css";
 
 export default function TemplateEditor({ onSaved }) {
   const [type, setType] = useState("email");
@@ -199,7 +17,7 @@ export default function TemplateEditor({ onSaved }) {
   const loadTemplates = async () => {
     try {
       const res = await fetchTemplates();
-      setTemplates(res.data.data || []); // important: use res.data.data
+      setTemplates(res.data.data || []);
     } catch (err) {
       console.error("Error loading templates:", err);
     }
@@ -216,19 +34,16 @@ export default function TemplateEditor({ onSaved }) {
       alert("Please fill all required fields!");
       return;
     }
-
     setLoading(true);
     try {
       const payload = { name, type, body };
       if (type === "email") payload.subject = subject;
-
       await saveTemplate(payload);
       alert("✅ Template saved successfully!");
       resetForm();
       loadTemplates();
       if (onSaved) onSaved();
     } catch (err) {
-      console.error("Save template error:", err.response?.data || err.message);
       alert("❌ Error saving template.");
     } finally {
       setLoading(false);
@@ -236,59 +51,97 @@ export default function TemplateEditor({ onSaved }) {
   };
 
   const removeTemplate = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this template?")) return;
+    if (!window.confirm("Delete this template?")) return;
     try {
       await deleteTemplate(id);
-      alert("Template deleted.");
       loadTemplates();
     } catch (err) {
-      console.error(err);
       alert("Error deleting template");
     }
   };
 
   return (
-    <div style={{ background: "#e3e8efff", padding: 20, borderRadius: 10, color: "#fff", maxWidth: 600, margin: "auto" }}>
-      <h2>🧩 Message Templates</h2>
+    <div className="template-container">
+      <header className="template-header">
+        <h2  className="hidden:md:block"> Message Templates</h2>
+        <p>Create and customize templates for automated outreach.</p>
+      </header>
 
-      <label>Name *</label>
-      <input value={name} onChange={(e) => setName(e.target.value)} style={styles.input} placeholder="Template Name" />
+      <div className="template-form-card">
+        <div className="template-input-row">
+          <div className="template-field" style={{ flex: 2 }}>
+            <label className="template-label">Template Name *</label>
+            <input 
+              className="template-input"
+              value={name} 
+              onChange={(e) => setName(e.target.value)} 
+              placeholder="e.g. Booking Confirmation" 
+            />
+          </div>
+          <div className="template-field">
+            <label className="template-label">Channel *</label>
+            <select className="template-select" value={type} onChange={(e) => setType(e.target.value)}>
+              <option value="email">📧 Email</option>
+              <option value="whatsapp">💬 WhatsApp</option>
+            </select>
+          </div>
+        </div>
 
-      <label>Type *</label>
-      <select value={type} onChange={(e) => setType(e.target.value)} style={styles.input}>
-        <option value="email">Email</option>
-        <option value="whatsapp">WhatsApp</option>
-      </select>
+        {type === "email" && (
+          <div className="template-field" style={{ marginBottom: '1.25rem' }}>
+            <label className="template-label">Subject Line *</label>
+            <input 
+              className="template-input"
+              value={subject} 
+              onChange={(e) => setSubject(e.target.value)} 
+              placeholder="What the user sees in their inbox" 
+            />
+          </div>
+        )}
 
-      {type === "email" && (
-        <>
-          <label>Subject *</label>
-          <input value={subject} onChange={(e) => setSubject(e.target.value)} style={styles.input} placeholder="Email Subject" />
-        </>
-      )}
+        <div className="template-field" style={{ marginBottom: '1.5rem' }}>
+          <label className="template-label">Message Content *</label>
+          <textarea 
+            className="template-textarea"
+            value={body} 
+            onChange={(e) => setBody(e.target.value)} 
+            placeholder="Type your message... use {{name}} for dynamic data." 
+          />
+        </div>
 
-      <label>Body *</label>
-      <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={6} style={{ ...styles.input, height: 120 }} placeholder="Message Body" />
+        <button 
+          className="template-save-btn"
+          onClick={save} 
+          disabled={loading}
+        >
+          {loading ? "Saving Template..." : "💾 Save Template"}
+        </button>
+      </div>
 
-      <button onClick={save} disabled={loading} style={{ ...styles.button, backgroundColor: loading ? "#64748b" : "#3b82f6" }}>
-        {loading ? "Saving..." : "💾 Save Template"}
-      </button>
-
-      <h3 style={{ marginTop: 20 }}>Existing Templates</h3>
-      {templates.length === 0 && <p>No templates yet.</p>}
-      <ul>
-        {templates.map((t) => (
-          <li key={t._id} style={{ marginBottom: 10 }}>
-            <b>{t.name}</b> ({t.type}){" "}
-            <button onClick={() => removeTemplate(t._id)} style={{ marginLeft: 10, color: "red" }}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      <div className="template-list-section">
+        <h3>Saved Templates</h3>
+        <div className="template-grid">
+          {templates.length === 0 ? (
+            <p className="empty-text">No templates available yet.</p>
+          ) : (
+            templates.map((t) => (
+              <div key={t._id} className="template-card">
+                <div className="card-content">
+                  <span className="badge">{t.type.toUpperCase()}</span>
+                  <span className="card-name">{t.name}</span>
+                </div>
+                <button 
+                  className="delete-icon-btn" 
+                  onClick={() => removeTemplate(t._id)}
+                  title="Delete Template"
+                >
+                  🗑️
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 }
-
-const styles = {
-  input: { width: "100%", padding: 8, marginBottom: 10, borderRadius: 6, border: "1px solid #eceef1ff", background: "#f3f4f5ff", color: "#e2e8f0" },
-  button: { width: "100%", padding: 10, border: "none", borderRadius: 6, color: "#fff", fontWeight: "bold", cursor: "pointer" },
-};

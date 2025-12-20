@@ -54,7 +54,7 @@
 //               <td><input type="checkbox" checked={c.active} onChange={() => toggleActive(c)} /></td>
 //               <td>
 //                 <button onClick={() => setEditing(c)} className="btn-edit">Edit</button>
-//                 <button onClick={() => handleDelete(c._id)} className="btn-delete">Delete</button>
+//                 <button onClick={() => handleDelete(c._id)} className="bg-red-500 text-white px-4 py-2">Delete</button>
 //                 <button onClick={() => cloneCalculator(c._id)} className="btn-clone">Clone</button>
 //               </td>
 //             </tr>

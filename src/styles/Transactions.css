@@ -404,7 +404,7 @@
   color: white;
 }
 
-.btn-delete {
+.bg-red-500 text-white px-4 py-2 {
   background: #dc3545;
   color: white;
 }
