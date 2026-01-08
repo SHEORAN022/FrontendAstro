@@ -12,7 +12,7 @@ export default function AdminAffirmations() {
   const [search, setSearch] = useState("");
 
   const API = axios.create({
-    baseURL: "http://localhost:7000/api",
+    baseURL: "https://astrobackend-5sr6.onrender.com/api",
   });
 
   /* ================= LOAD ================= */
